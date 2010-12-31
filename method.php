@@ -1,12 +1,7 @@
 <?php
 	//error_reporting(-1); ini_set("display_errors", 1);
 	header("Content-Type: text/plain");
-	require_once "jsonRPCClient.php";
-	require_once "jsonRPCClient.php";
-	function btcerr($e) { file_put_contents("../../btc/err", time()."\n$e\n\n", FILE_APPEND | LOCK_EX); echo "Sorry, b0rk3d!"; exit; }
-	$btcuser = implode("", file("../../btc/user", FILE_IGNORE_NEW_LINES));
-	$btcpass = implode("", file("../../btc/pass", FILE_IGNORE_NEW_LINES));
-	$btcconn = new jsonRPCClient("http://$btcuser:$btcpass@127.0.0.1:8332");
+	require_once "include.php";
 	if (isset($_POST["method"])) {
 		if ($_POST["method"] == "backupwallet" && isset($_POST["destination"])) {
 			try {

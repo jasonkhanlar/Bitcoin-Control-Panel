@@ -1,11 +1,6 @@
 <?php
 	//error_reporting(-1); ini_set("display_errors", 1);
-	require_once "config.php";
-	require_once "jsonRPCClient.php";
-	function btcerr($e) { file_put_contents($CONFIG["error_log_file"], time()."\n$e\n\n", FILE_APPEND | LOCK_EX); echo $CONFIG["error_message"]; exit; }
-	$btcuser = implode("", file($CONFIG["bitcoin_user_file"], FILE_IGNORE_NEW_LINES));
-	$btcpass = implode("", file($CONFIG["bitcoin_pass_file"], FILE_IGNORE_NEW_LINES));
-	$btcconn = new jsonRPCClient("http://$btcuser:$btcpass@127.0.0.1:8332");
+	require_once "include.php";
 	try { $generate = $btcconn->getgenerate(); } catch (Exception $e) { btcerr($e); }
 	try { $methodslist = $btcconn->help(); } catch (Exception $e) { btcerr($e); }
 	$methods = array(); $method = strtok($methodslist, "\n");
@@ -148,12 +143,10 @@
 		});
 	});
 	$(window).resize(function() {
-		$("#menu").css("height", "50px"); $("#output").css("height", "50px");
-		$("#menu").css("height", $(document).height() - $("#header").height());
-		$("#output").css("height", $(document).height() - $("#header").height());
+		$("#main").css("height", "50px");
+		$("#main").css("height", $(document).height() - $("#header").height());
 		$("#output").css("width", $(document).width() - $("#menu").width());
 	});
-
   </script>
   <style type="text/css">
 	html, body, form { height: 100%; width: 100%; }
@@ -165,8 +158,8 @@
 	div.block h4 { background-color: black; color: white; cursor: pointer; margin: 0; text-align: center; }
 	div.cmd { background-color: black; color: white; padding-bottom: 2px; padding-top: 2px; }
 	div#header { font-size: 2em; }
-	div#menu { float: left; height:50px; overflow: auto; width: 320px; }
-	div#output { float: left; overflow: auto; text-align: left; }
+	div#menu { float: left; height: 100%; overflow: auto; width: 320px; }
+	div#output { float: left; height: 100%; overflow: auto; text-align: left; }
 	input { border: 0; border-bottom: 1px solid black; padding: 0; text-align: left; width: 100%; }
 	pre { display: inline; margin: 0; }
   </style>
@@ -174,7 +167,7 @@
  </head>
  <body>
   <div id="header">Bitcoin</div>
-  <div id="content">
+  <div id="main">
    <div id="menu">
 <?php if (in_array("backupwallet", $methods)) { ?>
     <div class="block method backupwallet"><h4>backupwallet</h4>
