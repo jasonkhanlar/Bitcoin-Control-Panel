@@ -1,0 +1,13 @@
+REQUIREMENTS
+
+	jQuery - http://jquery.com/
+	JSON-RPC PHP - http://jsonrpcphp.org/
+
+	Edit config.php
+
+NOTES
+
+	index.php uses PHP shell_exec function:
+
+		$cpus = shell_exec("grep processor /proc/cpuinfo|wc -l");
+
