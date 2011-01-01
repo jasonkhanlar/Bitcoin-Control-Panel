@@ -29,7 +29,13 @@
 ?>
     <td class="confirmations"><?php echo $confirmations; ?> confirmations</td>
     <td class="date"><?php echo date("m/d/Y H:i:s", $time); ?></td>
-    <td class="description"></td>
+    <td class="description">
+<?php
+	try { $account = $btcconn->getaccount($address); } catch (Exception $e) { btcerr($e); }
+	if ($category == "receive") echo "Received with: $address ($account)";
+	else echo "To: $address";
+?>
+    </td>
     <td class="credit"><?php echo $category == "receive" ? "+".$amount : ""; ?></td>
     <td class="debit"><?php echo $category == "send" ? $amount : ""; ?></td>
     <td class="fee"><?php echo $fee; ?></td>
