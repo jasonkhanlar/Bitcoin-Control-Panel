@@ -5,7 +5,7 @@
 	try { $methodslist = $btcconn->help(); } catch (Exception $e) { btcerr($e); }
 	$methods = array(); $method = strtok($methodslist, "\n");
 	while ($method !== false) { if (strpos($method, " ")) $method = substr($method, 0, strpos($method, " ")); $methods[] = $method; $method = strtok("\n"); }
-	$cpus = shell_exec("grep processor /proc/cpuinfo|wc -l");
+	$cpus = 0; if (is_file("/proc/cpuinfo")) foreach (file("/proc/cpuinfo") as $line) if (strpos($line, "processor") !== false) $cpus++;
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
  <head>
@@ -22,7 +22,7 @@
 		else if (method == "getaccount") cmd = "getaccount("+$("#getaccount_address").val()+")";
 		else if (method == "getaccountaddress") cmd = "getaccountaddress("+$("#getaccountaddress_account").val()+")";
 		else if (method == "getaddressesbyaccount") cmd = "getaddressesbyaccount("+$("#getaddressesbyaccount_account").val()+")";
-		else if (method == "getbalance") cmd = "getbalance("+$("#getbalance_account").val()+")";
+		else if (method == "getbalance") cmd = "getbalance("+$("#getbalance_account").val()+","+$("#getbalance_minconf").val()+")";
 		else if (method == "getblockcount") cmd = "getblockcount()";
 		else if (method == "getblocknumber") cmd = "getblocknumber()";
 		else if (method == "getconnectioncount") cmd = "getconnectioncount()";
@@ -36,8 +36,8 @@
 		else if (method == "gettransaction") cmd = "gettransaction("+$("#gettransaction_txid").val()+")";
 		else if (method == "help") cmd = "help "+method_array.slice(1).join(" ");
 		else if (method == "listaccounts") cmd = "listaccounts("+$("#listaccounts_minconf").val()+")";
-		else if (method == "listreceivedbyaccount") cmd = "listreceivedbyaccount("+$("#listreceivedbyaccount_minconf").val()+","+$("#listreceivedbyaccount_includeempty")+")";
-		else if (method == "listreceivedbyaddress") cmd = "listreceivedbyaddress("+$("#listreceivedbyaddress_minconf").val()+","+$("#listreceivedbyaddress_includeempty")+")";
+		else if (method == "listreceivedbyaccount") cmd = "listreceivedbyaccount("+$("#listreceivedbyaccount_minconf").val()+","+$("#listreceivedbyaccount_includeempty").val()+")";
+		else if (method == "listreceivedbyaddress") cmd = "listreceivedbyaddress("+$("#listreceivedbyaddress_minconf").val()+","+$("#listreceivedbyaddress_includeempty").val()+")";
 		else if (method == "listtransactions") cmd = "listtransactions("+$("#listtransactions_account").val()+","+$("#listtransactions_count").val()+")";
 		else if (method == "move") cmd = "move("+$("#move_fromaccount").val()+","+$("#move_toaccount").val()+","+$("#move_amount").val()+","+$("#move_minconf").val()+","+$("#move_comment").val()+")";
 		else if (method == "sendfrom") cmd = "sendfrom("+$("#sendfrom_account").val()+","+$("#sendfrom_address").val()+","+$("#sendfrom_amount").val()+","+$("#sendfrom_minconf").val()+","+$("#sendfrom_comment").val()+","+$("#sendfrom_commentto").val()+")";
@@ -82,7 +82,7 @@
 		if (method == "getaccount") $.ajax({type: "POST", url: "method.php", data: "method=getaccount&address="+$("#getaccount_address").val(), success: function(response){ addtimed("getaccount", response); } });
 		if (method == "getaccountaddress") $.ajax({type: "POST", url: "method.php", data: "method=getaccountaddress&account="+$("#getaccountaddress_account").val(), success: function(response){ addtimed("getaccountaddress", response); } });
 		if (method == "getaddressesbyaccount") $.ajax({type: "POST", url: "method.php", data: "method=getaddressesbyaccount&account="+$("#getaddressesbyaccount_account").val(), success: function(response){ addtimed("getaddressesbyaccount", response); } });
-		if (method == "getbalance") $.ajax({type: "POST", url: "method.php", data: "method=getbalance&account="+$("#getbalance_account").val(), success: function(response){ addtimed("getbalance", response); } });
+		if (method == "getbalance") $.ajax({type: "POST", url: "method.php", data: "method=getbalance&account="+$("#getbalance_account").val()+"&minconf="+$("#getbalance_minconf").val(), success: function(response){ addtimed("getbalance", response); } });
 		if (method == "getblockcount") $.ajax({type: "POST", url: "method.php", data: "method=getblockcount", success: function(response){ addtimed("getblockcount", response); } });
 		if (method == "getblocknumber") $.ajax({type: "POST", url: "method.php", data: "method=getblocknumber", success: function(response){ addtimed("getblocknumber", response); } });
 		if (method == "getconnectioncount") $.ajax({type: "POST", url: "method.php", data: "method=getconnectioncount", success: function(response){ addtimed("getconnectioncount", response); } });
@@ -188,6 +188,7 @@
 <?php } if (in_array("getbalance", $methods)) { ?>
     <div class="block method getbalance"><h4>getbalance</h4>
      <input class="account method optional" id="getbalance_account" type="text"/>
+     <input class="minconf method optional" id="getbalance_minconf" type="text"/>
     </div>
 <?php } if (in_array("getblockcount", $methods)) { ?>
     <div class="block method getblockcount"><h4>getblockcount</h4>
