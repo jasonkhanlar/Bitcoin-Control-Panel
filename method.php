@@ -137,29 +137,27 @@
 			} catch (Exception $e) { btcerr($e); }
 		}
 		if ($_POST["method"] == "move" && isset($_POST["fromaccount"]) && isset($_POST["toaccount"]) && isset($_POST["amount"])) {
+			// This triggers error exception if insufficient funds.
+			// Command line shows: error: {"code":-6,"message":"Account has insufficient funds"}
+			// Exception $e does not seem to provide this information and therefore it doesn't seem possible to output the specific error.
+			// Any ideas?
 			try {
 				if (!is_numeric($_POST["amount"])) $_POST["amount"] = 0;
 				if (!is_numeric($_POST["minconf"])) $_POST["minconf"] = 1;
-				echo "Untested, uncertain how to use yet.  Fix!\n";
-				echo $_POST["fromaccount"].",".$_POST["toaccount"].",".(int)$_POST["amount"].",".(int)$_POST["minconf"].",".$_POST["comment"];
-				//echo $btcconn->move($_POST["fromaccount"],$_POST["toaccount"],(int)$_POST["amount"],(int)$_POST["minconf"],$_POST["comment"]);
+				echo $btcconn->move($_POST["fromaccount"],$_POST["toaccount"],(float)$_POST["amount"],(int)$_POST["minconf"],$_POST["comment"]);
 			} catch (Exception $e) { btcerr($e); }
 		}
 		if ($_POST["method"] == "sendfrom" && isset($_POST["account"]) && isset($_POST["address"]) && isset($_POST["amount"])) {
 			try {
 				if (!is_numeric($_POST["amount"])) $_POST["amount"] = 0;
 				if (!is_numeric($_POST["minconf"])) $_POST["minconf"] = 1;
-				echo "Untested, uncertain how to use yet.  Fix!\n";
-				echo $_POST["account"].",".$_POST["address"].",".(int)$_POST["amount"].",".(int)$_POST["minconf"].",".$_POST["comment"].",".$_POST["commentto"];
-				//echo $btcconn->sendfrom($_POST["account"],$_POST["address"],(int)$_POST["amount"],(int)$_POST["minconf"],$_POST["comment"],$_POST["commentto"]);
+				echo $btcconn->sendfrom($_POST["account"],$_POST["address"],(float)$_POST["amount"],(int)$_POST["minconf"],$_POST["comment"],$_POST["commentto"]);
 			} catch (Exception $e) { btcerr($e); }
 		}
 		if ($_POST["method"] == "sendtoaddress" && isset($_POST["address"]) && isset($_POST["amount"])) {
 			try {
 				if (!is_numeric($_POST["amount"])) $_POST["amount"] = 0;
-				echo "Untested, uncertain how to use yet.  Fix!\n";
-				echo $_POST["address"].",".(int)$_POST["amount"].",".$_POST["comment"].",".$_POST["commentto"];
-				//echo $btcconn->sendtoaddress($_POST["address"],(int)$_POST["amount"],$_POST["comment"],$_POST["commentto"]);
+				echo $btcconn->sendtoaddress($_POST["address"],(float)$_POST["amount"],$_POST["comment"],$_POST["commentto"]);
 			} catch (Exception $e) { btcerr($e); }
 		}
 		if ($_POST["method"] == "setaccount" && isset($_POST["address"]) && isset($_POST["account"])) {
@@ -177,7 +175,6 @@
 		if ($_POST["method"] == "stop") {
 			try {
 				echo $btcconn->stop();
-				//foreach ($info as $var => $val) echo $var.str_repeat(" ", 14 - strlen($var))." : $val\n";
 			} catch (Exception $e) { btcerr($e); }
 		}
 		if ($_POST["method"] == "validateaddress" && isset($_POST["address"])) {

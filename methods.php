@@ -72,7 +72,7 @@
 				var attrs = $(this).attr("class").split(" ");
 				var classes = ["method","required"];
 				for (var i=0; i<classes.length; i++) if (attrs.indexOf(classes[i]) > -1) attrs.splice(attrs.indexOf(classes[i]),1);
-				if ($(this).val() == "" || $(this).val() == attrs[0]) { allvalid = false; }
+				if (($(this).attr("class").indexOf("allowblank") == -1 && $(this).val() == "") || $(this).val() == attrs[0]) { allvalid = false; }
 			}
 			if ($(this).attr("class").split(" ").indexOf("optional") > -1) {
 				var attrs = $(this).attr("class").split(" ");
@@ -119,8 +119,6 @@
 		if ($(t).attr("class").indexOf("required") > -1 && $(t).attr("class").indexOf("allowblank") == -1 && $(t).val() == "") return false;
 		exec(event, $(t).attr("id").split("_")[0]);
 		var params = ["account","address","amount","comment","commentto","count","destination","fromaccount","minconf","toaccount","txid"];
-		// Eye candy
-		for (var i=0; i<params.length; i++) if ($(t).attr("class").split(" ").indexOf(params[i]) > -1) if ($(t).val() == params[i]) $(t).css("color", "#808080"); else $(t).css("color", "#000000");
 	}
 	// http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
 	function isNumeric(input) { return (input - 0) == input && input.length > 0; }
@@ -135,7 +133,7 @@
 		});
 		$("input.method").focus(function() {
 			var params = ["account","address","amount","comment","commentto","count","destination","fromaccount","minconf","toaccount","txid"];
-			for (var i=0; i<params.length; i++) if ($(this).attr("class").split(" ").indexOf(params[i]) > -1 && $(this).val() == params[i]) $(this).select();
+			for (var i=0; i<params.length; i++) if ($(this).attr("class").split(" ").indexOf(params[i]) > -1 && $(this).val() == params[i]) $(this).css("color", "#000000").select();
 		});
 		$("input.method").keyup(function(event) { exectimed(this, event); });
 		$("select.method").change(function(event) {
@@ -232,7 +230,7 @@
     </div>
 <?php } if (in_array("getreceivedbyaccount", $methods)) { ?>
     <div class="block method getreceivedbyaccount"><h4>getreceivedbyaccount</h4>
-     <input class="account method required" id="getreceivedbyaccount_account" type="text"/>
+     <input class="account method required allowblank" id="getreceivedbyaccount_account" type="text"/>
      <input class="minconf method optional" id="getreceivedbyaccount_minconf" type="text"/>
     </div>
 <?php } if (in_array("getreceivedbyaddress", $methods)) { ?>
@@ -274,15 +272,15 @@
     </div>
 <?php } if (in_array("move", $methods)) { ?>
     <div class="block method move"><h4>move</h4>
-     <input class="fromaccount method required" id="move_fromaccount" type="text"/>
-     <input class="toaccount method required" id="move_toaccount" type="text"/>
+     <input class="fromaccount method required allowblank" id="move_fromaccount" type="text"/>
+     <input class="toaccount method required allowblank" id="move_toaccount" type="text"/>
      <input class="amount method required" id="move_amount" type="text"/>
      <input class="minconf method optional" id="move_minconf" type="text"/>
      <input class="comment method optional" id="move_comment" type="text"/>
     </div>
 <?php } if (in_array("sendfrom", $methods)) { ?>
     <div class="block method sendfrom"><h4>sendfrom</h4>
-     <input class="account method required" id="sendfrom_account" type="text"/>
+     <input class="account method required allowblank" id="sendfrom_account" type="text"/>
      <input class="address method required" id="sendfrom_address" type="text"/>
      <input class="amount method required" id="sendfrom_amount" type="text"/>
      <input class="minconf method optional" id="sendfrom_minconf" type="text"/>
