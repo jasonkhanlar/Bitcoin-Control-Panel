@@ -28,7 +28,11 @@
 		if ($_POST["method"] == "getbalance" && isset($_POST["account"])) {
 			try {
 				if (!is_numeric($_POST["minconf"])) $_POST["minconf"] = 1;
-				echo $btcconn->getbalance($_POST["account"]);
+				if ($_POST["account"] == "") echo $btcconn->getbalance();
+				else {
+					if ($_POST["account"] == "\"\"") $_POST["account"] = "";
+					echo $btcconn->getbalance($_POST["account"]);
+				}
 			} catch (Exception $e) { btcerr($e); }
 		}
 		if ($_POST["method"] == "getblockcount") {
